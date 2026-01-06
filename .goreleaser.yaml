@@ -28,17 +28,6 @@ archives:
 checksum:
   name_template: "checksums.txt"
 
-signs:
-  - artifacts: checksum
-    args:
-      - "--batch"
-      - "--local-user"
-      - "{{ .Env.GPG_FINGERPRINT }}"
-      - "--output"
-      - "${signature}"
-      - "--detach-sign"
-      - "${artifact}"
-
 snapshot:
   version_template: "{{ .Tag }}-next"
 
@@ -56,9 +45,3 @@ release:
     name: awsmfa-go
   draft: true
   prerelease: auto
-
-# JFrog Artifactory configuration
-artifactories:
-  - name: asuuto
-    mode: binary
-    target: "{{ .Env.ARTIFACTORY_ASUUTO_URL }}/{{ .ProjectName }}/{{ .Version }}/{{ .Os }}/{{ .Arch }}"
