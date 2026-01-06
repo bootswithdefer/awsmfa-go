@@ -1,0 +1,64 @@
+---
+version: 2
+
+project_name: awsmfa-go
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - binary: awsmfa-go
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats: ["binary"]
+    # this name template makes the archive name compatible with the standard
+    # conventions used by many tools
+    name_template: >-
+      {{ .ProjectName }}_ {{- .Version }}_ {{- title .Os }}_ {{- if eq .Arch "amd64" }}x86_64 {{- else if eq .Arch "386" }}i386 {{- else }}{{ .Arch }}{{ end }} {{- if .Arm }}v{{ .Arm }}{{ end }} #magic___^_^___line
+checksum:
+  name_template: "checksums.txt"
+
+signs:
+  - artifacts: checksum
+    args:
+      - "--batch"
+      - "--local-user"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+
+snapshot:
+  version_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+# GitHub Release configuration
+release:
+  github:
+    owner: bootswithdefer
+    name: awsmfa-go
+  draft: true
+  prerelease: auto
+
+# JFrog Artifactory configuration
+artifactories:
+  - name: asuuto
+    mode: binary
+    target: "{{ .Env.ARTIFACTORY_ASUUTO_URL }}/{{ .ProjectName }}/{{ .Version }}/{{ .Os }}/{{ .Arch }}"
