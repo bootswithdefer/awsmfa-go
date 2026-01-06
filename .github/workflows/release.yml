@@ -1,3 +1,4 @@
+---
 name: Release
 
 # This GitHub action creates a release when a tag that matches the pattern
@@ -45,3 +46,4 @@ jobs:
           ARTIFACTORY_ASUUTO_URL: ${{ secrets.ET_ARTIFACTORY_URL }}
           ARTIFACTORY_ASUUTO_USERNAME: ${{ secrets.ET_ARTIFACTORY_USERNAME }}
           ARTIFACTORY_ASUUTO_PASSWORD: ${{ secrets.ET_ARTIFACTORY_TOKEN }}
+
